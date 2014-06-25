@@ -82,8 +82,18 @@ public class MongoDBCRUDTest {
 		
 		
 	}
-	
-	
+	@Test
+	public void modify(){
+		
+		print("修改用户：53a93e62957a55efe64c8fb1");
+		
+		DBObject u=new BasicDBObject();
+		u.put("name", "kk");
+		u.put("age", 90);
+		users.update(new BasicDBObject("_id", new ObjectId("53a93e62957a55efe64c8fb1")), u);
+		users.update(new BasicDBObject("_id", new ObjectId("53a93e62957a55efe64c8fb9")), u,true,false);
+		
+	}
 	
 	public void print(Object o) {
         System.out.println(o);
