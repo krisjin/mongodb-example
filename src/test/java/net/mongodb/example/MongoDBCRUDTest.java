@@ -12,7 +12,7 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
-import com.mongodb.Mongo;
+import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
 
 /**
@@ -22,15 +22,16 @@ import com.mongodb.MongoException;
 
 public class MongoDBCRUDTest {
 
-	private Mongo mongo = null;
+	private MongoClient mongoClient = null;
 	private DB db;
 	private DBCollection users;
 
 	@Before
 	public void inti() {
 		try {
-			mongo = new Mongo("127.0.0.1",27017);
-			db = mongo.getDB("shop");
+			mongoClient = new MongoClient("127.0.0.1", 27017);
+
+			db = mongoClient.getDB("shop");
 			users = db.getCollection("users");
 
 		} catch (UnknownHostException e) {
@@ -40,62 +41,63 @@ public class MongoDBCRUDTest {
 		}
 
 	}
-	
+
 	@After
-    public void destory() {
-        if (mongo != null)
-        	mongo.close();
-        mongo = null;
-        db = null;
-        users = null;
-        System.gc();
-    }
-	
+	public void destory() {
+		if (mongoClient != null)
+			mongoClient.close();
+		mongoClient = null;
+		db = null;
+		users = null;
+		System.gc();
+	}
+
 	@Test
-	public void queryAll(){
+	public void queryAll() {
 		DBCursor cursor = users.find();
-		while(cursor.hasNext()){
+		while (cursor.hasNext()) {
 			print(cursor.next());
 		}
-		
+
 	}
-	
-	//@Test
-	public void add(){
-		
-		DBObject user  =  new BasicDBObject();
+
+	// @Test
+	public void add() {
+
+		DBObject user = new BasicDBObject();
 		user.put("name", "jingui");
 		user.put("age", 28);
 		user.put("sex", "男");
 		users.save(user);
 		queryAll();
 	}
-	
-//	@Test
-	public void delete(){
-		
-//		print("删除Id=53a93d97957a3f1c3e54f22d");
-//		users.remove(new BasicDBObject(("_id"),new ObjectId("53a93d97957a3f1c3e54f22d")));
-		
+
+	// @Test
+	public void delete() {
+
+		// print("删除Id=53a93d97957a3f1c3e54f22d");
+		// users.remove(new BasicDBObject(("_id"),new
+		// ObjectId("53a93d97957a3f1c3e54f22d")));
+
 		print("删除年龄大于24的用户");
 		users.remove(new BasicDBObject("age", new BasicDBObject("$gte", 24)));
-		
-		
+
 	}
-	@Test
-	public void modify(){
-		
+
+	// @Test
+	public void modify() {
+
 		print("修改用户：53a93e62957a55efe64c8fb1");
-		
-		DBObject u=new BasicDBObject();
+
+		DBObject u = new BasicDBObject();
 		u.put("name", "kk");
 		u.put("age", 90);
 		users.update(new BasicDBObject("_id", new ObjectId("53a93e62957a55efe64c8fb1")), u);
-		users.update(new BasicDBObject("_id", new ObjectId("53a93e62957a55efe64c8fb9")), u,true,false);
-		
+		users.update(new BasicDBObject("_id", new ObjectId("53a93e62957a55efe64c8fb9")), u, true, false);
+
 	}
-	
+
 	public void print(Object o) {
-        System.out.println(o);
-    }
+		System.out.println(o);
+	}
 }
